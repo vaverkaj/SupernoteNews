@@ -43,7 +43,7 @@ jobs:
           GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
 
       - name: Download previous seen_articles.json
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: seen-articles
           path: .
@@ -53,8 +53,8 @@ jobs:
         run: |
           xvfb-run -a python news.py
 
-      - name: Upload seen_articles.json
-        uses: actions/upload-artifact@v3
+      - name: Upload updated seen_articles.json
+        uses: actions/upload-artifact@v4
         with:
           name: seen-articles
           path: seen_articles.json
