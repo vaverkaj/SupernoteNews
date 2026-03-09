@@ -17,6 +17,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+      
+      - name: Show current directory and files
+        run: |
+          pwd
+          ls -la
 
       - name: Install Python dependencies
         run: |
