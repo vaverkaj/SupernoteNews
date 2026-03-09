@@ -30,6 +30,9 @@ jobs:
       - name: Extract extension
         run: unzip bypass-paywalls-chrome-clean-master.zip
 
+      - name: Extract fonts
+        run: unzip fonts.zip
+
       - name: Install Playwright browsers
         run: |
           playwright install --with-deps chromium
@@ -42,4 +45,4 @@ jobs:
 
       - name: Run scraper in virtual display
         run: |
-          xvfb-run -a python main.py
+          xvfb-run -a python news.py
