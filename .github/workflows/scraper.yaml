@@ -42,12 +42,15 @@ jobs:
         env:
           GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
 
-      - name: Download previous seen_articles.json
-        uses: actions/download-artifact@v4
-        with:
-          name: seen-articles
-          path: .
-        continue-on-error: true
+      - name: Restore seen_articles.json
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ARTIFACT_ID=$(gh api repos/${GITHUB_REPOSITORY}/actions/artifacts --jq '.artifacts[] | select(.name=="seen-articles") | .id' | head -n1)
+          if [ -n "$ARTIFACT_ID" ]; then
+            gh api repos/${GITHUB_REPOSITORY}/actions/artifacts/$ARTIFACT_ID/zip --header "Accept: application/vnd.github+json" > seen_articles.zip
+            unzip -o seen_articles.zip
+          fi
 
       - name: Run scraper in virtual display
         run: |
