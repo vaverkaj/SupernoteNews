@@ -42,25 +42,12 @@ jobs:
         env:
           GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
 
-      - name: Check if seen-articles artifact exists
-        id: check_artifact
-        run: |
-          # this uses the GitHub API to see if the artifact exists for this workflow
-          ARTIFACTS=$(gh api repos/${GITHUB_REPOSITORY}/actions/artifacts --jq '.artifacts[].name')
-          echo "ARTIFACTS=$ARTIFACTS" >> $GITHUB_ENV
-          if echo "$ARTIFACTS" | grep -q "seen-articles"; then
-            echo "ARTIFACT_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "ARTIFACT_EXISTS=false" >> $GITHUB_ENV
-            echo "[]" > seen_articles.json  # initialize empty file
-          fi
-
       - name: Download previous seen_articles.json
         uses: actions/download-artifact@v4
         with:
           name: seen-articles
           path: .
-          if-no-artifact: warn
+        continue-on-error: true
 
       - name: Run scraper in virtual display
         run: |
