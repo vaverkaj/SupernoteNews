@@ -38,11 +38,23 @@ jobs:
           playwright install --with-deps chromium
 
       - name: Restore Google Drive token
-        run: |
-          echo "$GDRIVE_TOKEN" | base64 -d > token.pickle
+        run: echo "$GDRIVE_TOKEN" | base64 --decode > token.pickle
         env:
           GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
+
+      - name: Download previous seen_articles.json
+        uses: actions/download-artifact@v3
+        with:
+          name: seen-articles
+          path: .
+          if-no-artifact: warn
 
       - name: Run scraper in virtual display
         run: |
           xvfb-run -a python news.py
+
+      - name: Upload seen_articles.json
+        uses: actions/upload-artifact@v3
+        with:
+          name: seen-articles
+          path: seen_articles.json
