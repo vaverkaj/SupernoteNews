@@ -1,0 +1,40 @@
+name: scraper
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "*/30 * * * *"
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Extract extension
+        run: unzip bypass-paywalls-chrome-clean-master.zip
+
+      - name: Install Playwright browsers
+        run: |
+          playwright install --with-deps chromium
+
+      - name: Restore Google Drive token
+        run: |
+          echo "$GDRIVE_TOKEN" | base64 -d > token.pickle
+        env:
+          GDRIVE_TOKEN: ${{ secrets.GDRIVE_TOKEN }}
+
+      - name: Run scraper in virtual display
+        run: |
+          xvfb-run -a python main.py
